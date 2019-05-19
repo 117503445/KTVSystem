@@ -23,7 +23,7 @@ char* file_songs = "songs.scv";
 void save_songs() {
 	FILE* fp = fopen(file_songs, "w+");
 	int i;
-	for (int i = 0; i < num_songs; i++)
+	for (i = 0; i < num_songs; i++)
 	{
 		fprintf(fp, "%s;%s;%s", songs[i].name, songs[i].singer, songs[i].path);
 		if (i != num_songs - 1)
@@ -69,7 +69,7 @@ void load_songs() {
 void show_songs(bool isShowIndex) {
 	printf("\nnum_songs is %d\n", num_songs);
 	int i;
-	for (int i = 0; i < num_songs; i++)
+	for (i = 0; i < num_songs; i++)
 	{
 		if (isShowIndex) {
 			printf("%d ", i);
@@ -81,9 +81,7 @@ void show_songs(bool isShowIndex) {
 
 void write_string(string path, string text)
 {
-	FILE* fp = fopen(path, "w+");
-	fprintf(fp, "%s", text);
-	fclose(fp);
+
 }
 void write_strings(string path, lst_string texts)
 {
@@ -107,9 +105,9 @@ void read_string(string path)
 	}
 	else
 	{
-		char str[1024];
 		while (!feof(fp))
 		{
+			char str[1024] = {0};
 			fgets(str, max_line_char_num, fp);
 			printf("%s", str);
 		}
@@ -183,7 +181,7 @@ void remove_song() {
 	else
 	{
 		int i;
-		for (int i = index; i < num_songs - 1; i++)
+		for (i = index; i < num_songs - 1; i++)
 		{
 			songs[i] = songs[i + 1];
 		}
@@ -205,13 +203,34 @@ void create_test_data() {
 	save_songs();
 }
 void add_song() {
-	song s;
+	song s = { 0 };
 	puts("please input the song name");
 	gets(s.name);
 	puts("please input the singer name");
 	gets(s.singer);
-	puts("please input the file path");
+	puts("please input the file path,example: fu_kua.lrc ,and you must just english");
 	gets(s.path);
+	songs[num_songs] = s;
+	num_songs++;
+	save_songs();
+
+	puts("please input words,enter blank line to stop input\n");
+
+	
+	FILE* fp = fopen(s.path, "w+");
+	while (1) {
+		char buf[1024] = { 0 };
+		gets(buf);
+		if (strlen(buf) == 0)
+		{
+			break;
+		}
+		buf[strlen(buf)] = '\n';
+		fputs(buf, fp);
+	}
+	fclose(fp);
+
+	puts("add successful");
 }
 void main_loop(int isAdmin) {
 	char c;
@@ -246,6 +265,7 @@ void main_loop(int isAdmin) {
 			{
 				puts("You don't have permission");
 			}
+			add_song();
 			break;
 		case 'r':
 			(void)getchar();
