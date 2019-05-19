@@ -20,8 +20,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Users\117503445\Desktop\KTV\build\fk.lrc">
-      <Filter>源文件</Filter>
+    <None Include="Can%27t stand the rain.lrc">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="fu_kua.lrc">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="shi_nian.lrc">
+      <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -84,7 +84,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,7 +122,15 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Users\117503445\Desktop\KTV\build\fk.lrc" />
+    <None Include="Can%27t stand the rain.lrc">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="fu_kua.lrc">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="shi_nian.lrc">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

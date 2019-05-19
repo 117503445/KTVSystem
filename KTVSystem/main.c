@@ -9,12 +9,76 @@ typedef struct
 } lst_string;
 typedef struct
 {
-	char name[20];
+	char name[50];
 	char singer[20];
 	char path[100];
 } song;
+typedef int bool;
+
 song songs[100];
-int num_songs = 2;
+int num_songs = 0;
+
+char* file_songs = "songs.scv";
+
+void save_songs() {
+	FILE* fp = fopen(file_songs, "w+");
+	int i;
+	for (int i = 0; i < num_songs; i++)
+	{
+		fprintf(fp, "%s;%s;%s", songs[i].name, songs[i].singer, songs[i].path);
+		if (i != num_songs - 1)
+		{
+			fprintf(fp, "\n");
+		}
+	}
+	fclose(fp);
+}
+void load_songs() {
+	const int max_line_char_num = 1024;
+	FILE* fp = fopen(file_songs, "r");
+	if (fp == NULL)
+	{
+		printf("Open songs.scv failed.\n");
+		return;
+	}
+	else
+	{
+		char str[1024] = { 0 };
+		char* t;
+		while (!feof(fp))
+		{
+			fgets(str, max_line_char_num, fp);
+			t = strtok(str, ";");
+			strcpy(songs[num_songs].name, t);
+			//printf("%s\n", t);
+			t = strtok(NULL, ";");
+			strcpy(songs[num_songs].singer, t);
+			//printf("%s\n", t);	
+			t = strtok(NULL, ";");
+			//printf("%s\n", t);
+			strcpy(songs[num_songs].path, t);
+			if (songs[num_songs].path[strlen(songs[num_songs].path) - 1] == '\n')
+			{
+				songs[num_songs].path[strlen(songs[num_songs].path) - 1] = 0;
+			}
+			num_songs++;
+		}
+		fclose(fp);
+	}
+}
+void show_songs(bool isShowIndex) {
+	printf("\nnum_songs is %d\n", num_songs);
+	int i;
+	for (int i = 0; i < num_songs; i++)
+	{
+		if (isShowIndex) {
+			printf("%d ", i);
+		}
+		printf("%s;%s;%s\n", songs[i].name, songs[i].singer, songs[i].path);
+	}
+	puts("");
+}
+
 void write_string(string path, string text)
 {
 	FILE* fp = fopen(path, "w+");
@@ -32,14 +96,13 @@ void write_strings(string path, lst_string texts)
 	}
 	fclose(fp);
 }
-
 void read_string(string path)
 {
 	const int max_line_char_num = 1024;
 	FILE* fp = fopen(path, "r");
 	if (fp == NULL)
 	{
-		printf("Open File failed.\n");
+		printf("Open %s failed.\n", path);
 		return;
 	}
 	else
@@ -54,29 +117,110 @@ void read_string(string path)
 	}
 	printf("\n");
 }
+
+void show_lrc(song s) {
+	printf("\n---%s---\n---%s---\n---%s---\n\n", s.name, s.singer, s.path);
+	read_string(s.path);
+	printf("\n");
+}
 void search()
 {
+	printf("Please input singer or song's name\n");
 	char s[100] = { 0 };
-	gets(s);
+	gets(s);//ËÑË÷×Ö·û´®
 	int i;
-	for (i = 0; i < num_songs;i++) {
-		if (strcmp(songs[i].singer,s)==0)
+
+	int resultNum = 0;
+	int indexs[100] = { 0 };
+
+	for (i = 0; i < num_songs; i++) {
+		if (strstr(songs[i].singer, s) != NULL || strstr(songs[i].name, s) != NULL)
 		{
-			printf("\n---%s---\n---%s---\n---%s---", songs[i].name, songs[i].singer, songs[i].path);
-			read_string(songs[i].path);
-			printf("\n");
+			indexs[resultNum] = i;
+			printf("%d %s *** %s *** %s\n", resultNum, songs[i].name, songs[i].singer, songs[i].path);
+			resultNum++;
 		}
 	}
-	//read_string("Can't stand the rain.lrc");
+	printf("\n");
+	if (resultNum == 0)
+	{
+		printf("get nothing :(\n");
+	}
+	else if (resultNum == 1)
+	{
+		show_lrc(songs[indexs[0]]);
+	}
+	else
+	{
+		printf("Please input index\n");
+		int d;
+		while (1)
+		{
+			(void)scanf("%d", &d);
+			if (d < 0 || d >= resultNum)
+			{
+				printf("invalid input\n");
+			}
+			else
+			{
+				break;
+			}
+		}
+		show_lrc(songs[indexs[d]]);
+		(void)getchar();
+	}
 }
+void remove_song() {
+	show_songs(1);
+	puts("Please input the index");
+	int index;
+	(void)scanf("%d", &index);
+	(void)getchar();
+	if (index < 0 || index >= num_songs)
+	{
+		puts("invalid input");
+	}
+	else
+	{
+		int i;
+		for (int i = index; i < num_songs - 1; i++)
+		{
+			songs[i] = songs[i + 1];
+		}
+		num_songs--;
+		save_songs();
+		puts("remove_song successful");
+	}
 
-void user_loop()
-{
+
+}
+void create_test_data() {
+	song s1 = { "¸¡¿ä","³ÂÞÈÑ¸","fu_kua.lrc" };
+	song s2 = { "Can't stand the rain","The Rescues","Can't stand the rain.lrc" };
+	song s3 = { "Ê®Äê","³ÂÞÈÑ¸","shi_nian.lrc" };
+	songs[0] = s1;
+	songs[1] = s2;
+	songs[2] = s3;
+	num_songs = 3;
+	save_songs();
+}
+void add_song() {
+	song s;
+	puts("please input the song name");
+	gets(s.name);
+	puts("please input the singer name");
+	gets(s.singer);
+	puts("please input the file path");
+	gets(s.path);
+}
+void main_loop(int isAdmin) {
 	char c;
 	while (1)
 	{
-		puts("Press Q To quit\nPress S to search");
-
+		puts("Press Q To quit\nPress S to search\nPress D To display all songs");
+		if (isAdmin) {
+			puts("Press A To add song\nPress R To romove songs\nPress C To create default data");
+		}
 		c = getchar();
 		if (c >= 'A' && c <= 'Z')
 		{
@@ -91,44 +235,58 @@ void user_loop()
 		case 's':
 			(void)getchar();
 			search();
-			
+			break;
+		case 'd':
+			(void)getchar();
+			show_songs(0);
+			break;
+		case 'a':
+			(void)getchar();
+			if (!isAdmin)
+			{
+				puts("You don't have permission");
+			}
+			break;
+		case 'r':
+			(void)getchar();
+			if (!isAdmin)
+			{
+				puts("You don't have permission");
+			}
+			remove_song();
+			break;
+		case 'c':
+			(void)getchar();
+			if (!isAdmin)
+			{
+				puts("You don't have permission");
+			}
+			create_test_data();
 			break;
 		default:
 			printf("invalid input\n");
-
 			break;
 		}
-		//(void)getchar();
 	}
 }
 
 int main()
 {
-	song s1 = { "¸¡¿ä","³ÂÞÈÑ¸","fk.lrc" };
-	song s2 = { "Can't stand the rain","The Rescues","fk.lrc"};
-	songs[0] = s1;
-	songs[1] = s2;
-
-
-
+	load_songs();
 	int isAdmin = 0;
 	puts("Are you Admin? User:press 0,Admin:press 1");
-	(void)scanf("%d", &isAdmin);
-	if (isAdmin != 0 && isAdmin != 1)
-	{
-		puts("invalid input");
-		return 0;
+	while (1) {
+		(void)scanf("%d", &isAdmin);
+		(void)getchar();
+		if (isAdmin != 0 && isAdmin != 1)
+		{
+			puts("invalid input");
+		}
+		else
+		{
+			break;
+		}
 	}
-	(void)getchar();
-
-	if (isAdmin) {
-
-	}
-	else
-	{
-		user_loop();
-	}
-
-
+	main_loop(isAdmin);
 	return 0;
 }
