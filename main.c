@@ -2,28 +2,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include "song.h"
+#include "lst_song.h"
 typedef wint_t *string;
+
 typedef struct
 {
 	string s[100];
 	int length;
 } lst_string;
 
-typedef struct
-{
-	char name[50];
-	char singer[20];
-	char path[100];
-} song;
 
 song songs[100];
 int num_songs = 0;
 
-char *file_songs = "songs.scv";
+char *songs_path = "songs.scv";
 
 void save_songs()
 {
-	FILE *fp = fopen(file_songs, "w+");
+	FILE *fp = fopen(songs_path, "w+");
 	int i;
 	for (i = 0; i < num_songs; i++)
 	{
@@ -38,7 +35,7 @@ void save_songs()
 void load_songs()
 {
 	const int max_line_char_num = 1024;
-	FILE *fp = fopen(file_songs, "r");
+	FILE *fp = fopen(songs_path, "r");
 	if (fp == NULL)
 	{
 		printf("Sorry, open songs.scv failed.\n");
@@ -69,7 +66,7 @@ void load_songs()
 		fclose(fp);
 	}
 }
-void show_songs(int isShowIndex)
+void songs_print(int isShowIndex)
 {
 	printf("\nnum_songs is %d\n", num_songs);
 	int i;
@@ -162,7 +159,7 @@ void search()
 }
 void remove_song()
 {
-	show_songs(1);
+	songs_print(1);
 	puts("Please input the index");
 	int index;
 	(void)scanf("%d", &index);
@@ -252,7 +249,7 @@ void main_loop(int isAdmin)
 			break;
 		case 'd':
 			(void)getchar();
-			show_songs(0);
+			songs_print(0);
 			break;
 		case 'a':
 			(void)getchar();
