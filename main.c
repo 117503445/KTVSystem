@@ -27,7 +27,7 @@ void save_songs()
 	int i;
 	for (i = 0; i < num_songs; i++)
 	{
-		fprintf(fp, "%s;%s;%s", songs[i].name, songs[i].cook, songs[i].path);
+		fprintf(fp, "%s;%s;%s", songs[i].name, songs[i].singer, songs[i].path);
 		if (i != num_songs - 1)
 		{
 			fprintf(fp, "\n");
@@ -42,7 +42,7 @@ void load_songs()
 	if (fp == NULL)
 	{
 		printf("Sorry, open songs.scv failed.\n");
-		return
+		return;
 	}
 	else
 	{
@@ -55,7 +55,7 @@ void load_songs()
 			strcpy(songs[num_songs].name, t);
 			//printf("%s\n", t);
 			t = strtok(NULL, ";");
-			strcpy(songs[num_songs].cook, t);
+			strcpy(songs[num_songs].singer, t);
 			//printf("%s\n", t);
 			t = strtok(NULL, ";");
 			//printf("%s\n", t);
@@ -79,7 +79,7 @@ void show_songs(int isShowIndex)
 		{
 			printf("%d ", i);
 		}
-		printf("%s;%s;%s\n", songs[i].name, songs[i].cook, songs[i].path);
+		printf("%s;%s;%s\n", songs[i].name, songs[i].singer, songs[i].path);
 	}
 	puts("");
 }
@@ -108,13 +108,13 @@ void read_string(string path)
 
 void show_lrc(song s)
 {
-	printf("\n---%s---\n---%s---\n---%s---\n\n", s.name, s.cook, s.path);
+	printf("\n---%s---\n---%s---\n---%s---\n\n", s.name, s.singer, s.path);
 	read_string(s.path);
 	printf("\n");
 }
 void search()
 {
-	printf("Please input cook or song's name\n");
+	printf("Please input singer or song's name\n");
 	char s[100] = {0};
 	gets(s);
 	int i;
@@ -124,10 +124,10 @@ void search()
 
 	for (i = 0; i < num_songs; i++)
 	{
-		if (strstr(songs[i].cook, s) != NULL || strstr(songs[i].name, s) != NULL)
+		if (strstr(songs[i].singer, s) != NULL || strstr(songs[i].name, s) != NULL)
 		{
 			indexs[resultNum] = i;
-			printf("%d %s *** %s *** %s\n", resultNum, songs[i].name, songs[i].cook, songs[i].path);
+			printf("%d %s *** %s *** %s\n", resultNum, songs[i].name, songs[i].singer, songs[i].path);
 			resultNum++;
 		}
 	}
@@ -185,9 +185,9 @@ void remove_song()
 }
 void create_test_data()
 {
-	song s1 = {"����", "����Ѹ", "fu_kua.lrc"};
+	song s1 = {"浮夸", "陈奕迅", "fu_kua.lrc"};
 	song s2 = {"Can't stand the rain", "The Rescues", "Can't stand the rain.lrc"};
-	song s3 = {"ʮ��", "����Ѹ", "shi_nian.lrc"};
+	song s3 = {"十年", "陈奕迅", "shi_nian.lrc"};
 	songs[0] = s1;
 	songs[1] = s2;
 	songs[2] = s3;
@@ -199,8 +199,8 @@ void add_song()
 	song s = {0};
 	puts("please input the song name");
 	gets(s.name);
-	puts("please input the cook name");
-	gets(s.cook);
+	puts("please input the singer name");
+	gets(s.singer);
 	puts("please input the file path, example: fu_kua.lrc, and you could only input english");
 	gets(s.path);
 	songs[num_songs] = s;
