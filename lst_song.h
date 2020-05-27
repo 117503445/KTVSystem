@@ -5,7 +5,11 @@
 
 typedef struct
 {
-    song* s[100];
+    song *s[100];
     int length;
 } lst_song;
+
+void lst_song_print(lst_song *songs);
+
+#include "lst_song.c"
 #endif
