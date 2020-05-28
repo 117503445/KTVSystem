@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    song *s[100];
+    song *songs[100];
     int length;
 } lst_song;
 

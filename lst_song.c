@@ -1,9 +1,9 @@
 #include "lst_song.h"
-void lst_song_print(lst_song *songs)
+void lst_song_print(lst_song *lst_song)
 {
     int i;
-    for (i = 0; i < songs->length; i++)
+    for (i = 0; i < lst_song->length; i++)
     {
-        /* code */
+        song_print(lst_song->songs[i]);
     }
 }

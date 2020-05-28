@@ -12,7 +12,6 @@ typedef struct
 	int length;
 } lst_string;
 
-
 song songs[100];
 int num_songs = 0;
 
@@ -143,7 +142,7 @@ void search()
 		int d;
 		while (1)
 		{
-			(void)scanf("%d", &d);
+			scanf("%d", &d);
 			if (d < 0 || d >= resultNum)
 			{
 				printf("invalid input\n");
@@ -154,7 +153,7 @@ void search()
 			}
 		}
 		show_lrc(songs[indexs[d]]);
-		(void)getchar();
+		getchar();
 	}
 }
 void remove_song()
@@ -162,8 +161,8 @@ void remove_song()
 	songs_print(1);
 	puts("Please input the index");
 	int index;
-	(void)scanf("%d", &index);
-	(void)getchar();
+	scanf("%d", &index);
+	getchar();
 	if (index < 0 || index >= num_songs)
 	{
 		puts("invalid input");
@@ -244,15 +243,15 @@ void main_loop(int isAdmin)
 			return;
 			break;
 		case 's':
-			(void)getchar();
+			getchar();
 			search();
 			break;
 		case 'd':
-			(void)getchar();
+			getchar();
 			songs_print(0);
 			break;
 		case 'a':
-			(void)getchar();
+			getchar();
 			if (!isAdmin)
 			{
 				puts("You don't have permission");
@@ -260,7 +259,7 @@ void main_loop(int isAdmin)
 			add_song();
 			break;
 		case 'r':
-			(void)getchar();
+			getchar();
 			if (!isAdmin)
 			{
 				puts("You don't have permission");
@@ -268,7 +267,7 @@ void main_loop(int isAdmin)
 			remove_song();
 			break;
 		case 'c':
-			(void)getchar();
+			getchar();
 			if (!isAdmin)
 			{
 				puts("You don't have permission");
