@@ -12,8 +12,10 @@ typedef struct
 	int length;
 } lst_string;
 
-song songs[100];
-int num_songs = 0;
+// song songs[100];
+// int num_songs = 0;
+
+lst_song *list_song;
 
 char *songs_path = "songs.scv";
 
@@ -21,10 +23,11 @@ void save_songs()
 {
 	FILE *fp = fopen(songs_path, "w+");
 	int i;
-	for (i = 0; i < num_songs; i++)
+	for (i = 0; i < list_song->length; i++)
 	{
-		fprintf(fp, "%s;%s;%s", songs[i].name, songs[i].singer, songs[i].path);
-		if (i != num_songs - 1)
+		song *s = list_song->songs[i];
+		fprintf(fp, "%s;%s;%s", s->name, s->singer, s->path);
+		if (i != list_song->length - 1)
 		{
 			fprintf(fp, "\n");
 		}
@@ -43,39 +46,64 @@ void load_songs()
 	else
 	{
 		char str[1024] = {0};
-		char *t;
+		char *t = (char *)malloc(sizeof(char) * 100);
 		while (!feof(fp))
 		{
 			fgets(str, max_line_char_num, fp);
+			char *name = (char *)malloc(sizeof(char) * 100);
+			char *singer = (char *)malloc(sizeof(char) * 100);
+			char *path = (char *)malloc(sizeof(char) * 100);
 			t = strtok(str, ";");
-			strcpy(songs[num_songs].name, t);
+
+			//song *s = list_song->
+
+			strcpy(name, t);
 			//printf("%s\n", t);
 			t = strtok(NULL, ";");
-			strcpy(songs[num_songs].singer, t);
+			strcpy(singer, t);
 			//printf("%s\n", t);
 			t = strtok(NULL, ";");
 			//printf("%s\n", t);
-			strcpy(songs[num_songs].path, t);
-			if (songs[num_songs].path[strlen(songs[num_songs].path) - 1] == '\n')
+			strcpy(path, t);
+			// int i;
+			// for (i = 0; i < strlen(path); i++)
+			// {
+			// 	printf("%d ", path[i]);
+			// }
+
+			if (path[strlen(path) - 1] == '\n')
 			{
-				songs[num_songs].path[strlen(songs[num_songs].path) - 1] = 0;
+				path[strlen(path) - 1] = 0;
 			}
-			num_songs++;
+			// for (i = 0; i < strlen(path); i++)
+			// {
+			// 	printf("%d ", path[i]);
+			// }
+			song *song = song_create_with_parameter(name, singer, path);
+			printf("1146");
+			lst_song_append(list_song, song);
+
+			// if (songs[num_songs].path[strlen(songs[num_songs].path) - 1] == '\n')
+			// {
+			// 	songs[num_songs].path[strlen(songs[num_songs].path) - 1] = 0;
+			// }
+			// num_songs++;
 		}
 		fclose(fp);
 	}
 }
 void songs_print(int isShowIndex)
 {
-	printf("\nnum_songs is %d\n", num_songs);
+	printf("\nnum_songs is %d\n", list_song->length);
 	int i;
-	for (i = 0; i < num_songs; i++)
+	for (i = 0; i < list_song->length; i++)
 	{
 		if (isShowIndex)
 		{
 			printf("%d ", i);
 		}
-		printf("%s;%s;%s\n", songs[i].name, songs[i].singer, songs[i].path);
+		song *s = lst_song_index_at(list_song, i);
+		printf("%s;%s;%s\n", s->name, s->singer, s->path);
 	}
 	puts("");
 }
@@ -118,12 +146,13 @@ void search()
 	int resultNum = 0;
 	int indexs[100] = {0};
 
-	for (i = 0; i < num_songs; i++)
+	for (i = 0; i < list_song->length; i++)
 	{
-		if (strstr(songs[i].singer, s) != NULL || strstr(songs[i].name, s) != NULL)
+		song *song = lst_song_index_at(list_song, i);
+		if (strstr(song->singer, s) != NULL || strstr(song->name, s) != NULL)
 		{
 			indexs[resultNum] = i;
-			printf("%d %s *** %s *** %s\n", resultNum, songs[i].name, songs[i].singer, songs[i].path);
+			printf("%d %s *** %s *** %s\n", resultNum, song->name, song->singer, song->path);
 			resultNum++;
 		}
 	}
@@ -134,7 +163,8 @@ void search()
 	}
 	else if (resultNum == 1)
 	{
-		show_lrc(songs[indexs[0]]);
+		song *so = lst_song_index_at(list_song, indexs[0]);
+		show_lrc(*so);
 	}
 	else
 	{
@@ -152,7 +182,8 @@ void search()
 				break;
 			}
 		}
-		show_lrc(songs[indexs[d]]);
+		song *so = lst_song_index_at(list_song, indexs[d]);
+		show_lrc(*so);
 		getchar();
 	}
 }
@@ -163,31 +194,29 @@ void remove_song()
 	int index;
 	scanf("%d", &index);
 	getchar();
-	if (index < 0 || index >= num_songs)
+	if (index < 0 || index >= list_song->length)
 	{
 		puts("invalid input");
 	}
 	else
 	{
 		int i;
-		for (i = index; i < num_songs - 1; i++)
+		for (i = index; i < list_song->length - 1; i++)
 		{
-			songs[i] = songs[i + 1];
+			list_song->songs[i] = list_song->songs[i + 1];
 		}
-		num_songs--;
+		list_song->length--;
 		save_songs();
 		puts("remove_song successful");
 	}
 }
 void create_test_data()
 {
-	song s1 = {"浮夸", "陈奕迅", "fu_kua.lrc"};
-	song s2 = {"Can't stand the rain", "The Rescues", "Can't stand the rain.lrc"};
-	song s3 = {"十年", "陈奕迅", "shi_nian.lrc"};
-	songs[0] = s1;
-	songs[1] = s2;
-	songs[2] = s3;
-	num_songs = 3;
+	// song s1 = {"浮夸", "陈奕迅", "fu_kua.lrc"};
+	// song s2 = {"Can't stand the rain", "The Rescues", "Can't stand the rain.lrc"};
+	// song s3 = {"十年", "陈奕迅", "shi_nian.lrc"};
+	lst_song_append(list_song, song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"fu_kua.lrc"));
+
 	save_songs();
 }
 void add_song()
@@ -199,8 +228,9 @@ void add_song()
 	gets(s.singer);
 	puts("please input the file path, example: fu_kua.lrc, and you could only input english");
 	gets(s.path);
-	songs[num_songs] = s;
-	num_songs++;
+	//songs[num_songs] = s;
+	//num_songs++;
+	lst_song_append(list_song, &s);
 	save_songs();
 
 	puts("please input words, enter blank line to stop input\n");
@@ -283,6 +313,8 @@ void main_loop(int isAdmin)
 
 int main()
 {
+
+	list_song = lst_song_create_empty();
 	load_songs();
 	int isAdmin = 0;
 	puts("Are you Admin?\nUser: please press 0\nAdmin: please press 1");
