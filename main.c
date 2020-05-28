@@ -89,7 +89,7 @@ void songs_print(int is_show_index)
 	puts("");
 }
 
-void read_string(wint_t *path)
+void read_string(char *path)
 {
 	const int max_line_char_num = 1024;
 	FILE *fp = fopen(path, "r");
@@ -124,27 +124,27 @@ void search()
 	gets(s);
 	int i;
 
-	int resultNum = 0;
-	int indexs[100] = {0};
+	int result_num = 0;
+	int dict_index[100] = {0};
 
 	for (i = 0; i < list_song->length; i++)
 	{
 		song *song = lst_song_index_at(list_song, i);
 		if (strstr(song->singer, s) != NULL || strstr(song->name, s) != NULL)
 		{
-			indexs[resultNum] = i;
-			printf("%d %s *** %s *** %s\n", resultNum, song->name, song->singer, song->path);
-			resultNum++;
+			dict_index[result_num] = i;
+			printf("%d %s *** %s *** %s\n", result_num, song->name, song->singer, song->path);
+			result_num++;
 		}
 	}
 	printf("\n");
-	if (resultNum == 0)
+	if (result_num == 0)
 	{
 		printf("get nothing :(\n");
 	}
-	else if (resultNum == 1)
+	else if (result_num == 1)
 	{
-		song *so = lst_song_index_at(list_song, indexs[0]);
+		song *so = lst_song_index_at(list_song, dict_index[0]);
 		show_lrc(so);
 	}
 	else
@@ -154,7 +154,7 @@ void search()
 		while (1)
 		{
 			scanf("%d", &d);
-			if (d < 0 || d >= resultNum)
+			if (d < 0 || d >= result_num)
 			{
 				printf("invalid input\n");
 			}
@@ -163,7 +163,7 @@ void search()
 				break;
 			}
 		}
-		song *so = lst_song_index_at(list_song, indexs[d]);
+		song *so = lst_song_index_at(list_song, dict_index[d]);
 		show_lrc(so);
 		getchar();
 	}
