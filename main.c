@@ -12,20 +12,19 @@ typedef struct
 	int length;
 } lst_string;
 
-// song songs[100];
-// int num_songs = 0;
-
 lst_song *list_song;
 
 char *songs_path = "songs.scv";
 
-void save_songs()
+void create_test_data();
+
+void lst_song_save()
 {
 	FILE *fp = fopen(songs_path, "w+");
 	int i;
 	for (i = 0; i < list_song->length; i++)
 	{
-		song *s = list_song->songs[i];
+		song *s = lst_song_index_at(list_song, i);
 		fprintf(fp, "%s;%s;%s", s->name, s->singer, s->path);
 		if (i != list_song->length - 1)
 		{
@@ -34,13 +33,14 @@ void save_songs()
 	}
 	fclose(fp);
 }
-void load_songs()
+void lst_song_load()
 {
 	const int max_line_char_num = 1024;
 	FILE *fp = fopen(songs_path, "r");
 	if (fp == NULL)
 	{
-		printf("Sorry, open songs.scv failed.\n");
+		printf("Sorry, open songs.scv failed. Try to create test data. \n");
+		create_test_data();
 		return;
 	}
 	else
@@ -50,55 +50,36 @@ void load_songs()
 		while (!feof(fp))
 		{
 			fgets(str, max_line_char_num, fp);
+
 			char *name = (char *)malloc(sizeof(char) * 100);
 			char *singer = (char *)malloc(sizeof(char) * 100);
 			char *path = (char *)malloc(sizeof(char) * 100);
+
 			t = strtok(str, ";");
-
-			//song *s = list_song->
-
 			strcpy(name, t);
-			//printf("%s\n", t);
 			t = strtok(NULL, ";");
 			strcpy(singer, t);
-			//printf("%s\n", t);
 			t = strtok(NULL, ";");
-			//printf("%s\n", t);
 			strcpy(path, t);
-			// int i;
-			// for (i = 0; i < strlen(path); i++)
-			// {
-			// 	printf("%d ", path[i]);
-			// }
 
 			if (path[strlen(path) - 1] == '\n')
 			{
 				path[strlen(path) - 1] = 0;
 			}
-			// for (i = 0; i < strlen(path); i++)
-			// {
-			// 	printf("%d ", path[i]);
-			// }
-			song *song = song_create_with_parameter(name, singer, path);
-			printf("1146");
-			lst_song_append(list_song, song);
 
-			// if (songs[num_songs].path[strlen(songs[num_songs].path) - 1] == '\n')
-			// {
-			// 	songs[num_songs].path[strlen(songs[num_songs].path) - 1] = 0;
-			// }
-			// num_songs++;
+			song *song = song_create_with_parameter(name, singer, path);
+			lst_song_append(list_song, song);
 		}
 		fclose(fp);
 	}
 }
-void songs_print(int isShowIndex)
+void songs_print(int is_show_index)
 {
 	printf("\nnum_songs is %d\n", list_song->length);
 	int i;
 	for (i = 0; i < list_song->length; i++)
 	{
-		if (isShowIndex)
+		if (is_show_index)
 		{
 			printf("%d ", i);
 		}
@@ -108,7 +89,7 @@ void songs_print(int isShowIndex)
 	puts("");
 }
 
-void read_string(string path)
+void read_string(wint_t *path)
 {
 	const int max_line_char_num = 1024;
 	FILE *fp = fopen(path, "r");
@@ -130,10 +111,10 @@ void read_string(string path)
 	printf("\n");
 }
 
-void show_lrc(song s)
+void show_lrc(song *s)
 {
-	printf("\n---%s---\n---%s---\n---%s---\n\n", s.name, s.singer, s.path);
-	read_string(s.path);
+	printf("\n---%s---\n---%s---\n---%s---\n\n", s->name, s->singer, s->path);
+	read_string(s->path);
 	printf("\n");
 }
 void search()
@@ -164,7 +145,7 @@ void search()
 	else if (resultNum == 1)
 	{
 		song *so = lst_song_index_at(list_song, indexs[0]);
-		show_lrc(*so);
+		show_lrc(so);
 	}
 	else
 	{
@@ -183,7 +164,7 @@ void search()
 			}
 		}
 		song *so = lst_song_index_at(list_song, indexs[d]);
-		show_lrc(*so);
+		show_lrc(so);
 		getchar();
 	}
 }
@@ -206,18 +187,17 @@ void remove_song()
 			list_song->songs[i] = list_song->songs[i + 1];
 		}
 		list_song->length--;
-		save_songs();
+		lst_song_save();
 		puts("remove_song successful");
 	}
 }
 void create_test_data()
 {
-	// song s1 = {"浮夸", "陈奕迅", "fu_kua.lrc"};
-	// song s2 = {"Can't stand the rain", "The Rescues", "Can't stand the rain.lrc"};
-	// song s3 = {"十年", "陈奕迅", "shi_nian.lrc"};
 	lst_song_append(list_song, song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"fu_kua.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((char *)"Can't stand the rain", (char *)"The Rescues", (char *)"Can't stand the rain.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((char *)"十年", (char *)"陈奕迅", (char *)"shi_nian.lrc"));
 
-	save_songs();
+	lst_song_save();
 }
 void add_song()
 {
@@ -231,7 +211,7 @@ void add_song()
 	//songs[num_songs] = s;
 	//num_songs++;
 	lst_song_append(list_song, &s);
-	save_songs();
+	lst_song_save();
 
 	puts("please input words, enter blank line to stop input\n");
 
@@ -251,13 +231,13 @@ void add_song()
 
 	puts("add successful");
 }
-void main_loop(int isAdmin)
+void main_loop(int is_admin)
 {
 	char c;
 	while (1)
 	{
 		puts("Press Q To quit\nPress S to search\nPress D To display all songs");
-		if (isAdmin)
+		if (is_admin)
 		{
 			puts("Press A To add song\nPress R To romove songs\nPress C To create default data");
 		}
@@ -282,7 +262,7 @@ void main_loop(int isAdmin)
 			break;
 		case 'a':
 			getchar();
-			if (!isAdmin)
+			if (!is_admin)
 			{
 				puts("You don't have permission");
 			}
@@ -290,7 +270,7 @@ void main_loop(int isAdmin)
 			break;
 		case 'r':
 			getchar();
-			if (!isAdmin)
+			if (!is_admin)
 			{
 				puts("You don't have permission");
 			}
@@ -298,7 +278,7 @@ void main_loop(int isAdmin)
 			break;
 		case 'c':
 			getchar();
-			if (!isAdmin)
+			if (!is_admin)
 			{
 				puts("You don't have permission");
 			}
@@ -315,14 +295,14 @@ int main()
 {
 
 	list_song = lst_song_create_empty();
-	load_songs();
-	int isAdmin = 0;
+	lst_song_load();
+	int is_admin = 0;
 	puts("Are you Admin?\nUser: please press 0\nAdmin: please press 1");
 	while (1)
 	{
-		scanf("%d", &isAdmin);
+		scanf("%d", &is_admin);
 		getchar();
-		if (isAdmin != 0 && isAdmin != 1)
+		if (is_admin != 0 && is_admin != 1)
 		{
 			puts("invalid input");
 		}
@@ -331,6 +311,6 @@ int main()
 			break;
 		}
 	}
-	main_loop(isAdmin);
+	main_loop(is_admin);
 	return 0;
 }
