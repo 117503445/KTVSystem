@@ -7,7 +7,7 @@
 
 #define debug
 
-typedef wint_t *string;
+typedef wchar_t *string;
 
 typedef struct
 {
@@ -92,10 +92,13 @@ void songs_print(int is_show_index)
 	puts("");
 }
 
-void read_string(char *path)
+void read_string(wchar_t *path)
 {
+	printf("%s", path);
 	const int max_line_char_num = 1024;
-	FILE *fp = fopen(path, "r");
+
+	FILE *fp = _wfopen(path, "r");
+
 	if (fp == NULL)
 	{
 		printf("Open %s failed.\n", path);
@@ -309,7 +312,7 @@ int test_show_lrc_1()
 }
 int test_read_string_0()
 {
-	read_string((wint_t *)"浮夸.lrc");
+	read_string(L"浮夸.lrc");
 }
 void func_debug()
 {
