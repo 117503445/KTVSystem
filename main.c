@@ -4,6 +4,9 @@
 #include <wchar.h>
 #include "song.h"
 #include "lst_song.h"
+
+#define debug
+
 typedef wint_t *string;
 
 typedef struct
@@ -121,7 +124,9 @@ void search()
 {
 	printf("Please input singer or song's name\n");
 	char s[100] = {0};
+
 	gets(s);
+
 	int i;
 
 	int result_num = 0;
@@ -290,9 +295,33 @@ void main_loop(int is_admin)
 		}
 	}
 }
-
+int test_show_lrc_0()
+{
+	song *s = song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"fu_kua.lrc");
+	show_lrc(s);
+	return 0;
+}
+int test_show_lrc_1()
+{
+	song *s = song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"浮夸.lrc");
+	show_lrc(s);
+	return 0;
+}
+int test_read_string_0()
+{
+	read_string((wint_t *)"浮夸.lrc");
+}
+void func_debug()
+{
+	test_read_string_0();
+}
 int main()
 {
+#ifdef debug
+	func_debug();
+	printf("debug finished");
+	return 0;
+#endif
 
 	list_song = lst_song_create_empty();
 	lst_song_load();
