@@ -4,7 +4,7 @@
 #include <wchar.h>
 #include "song.h"
 #include "lst_song.h"
-
+#include <locale.h>
 #define debug
 
 typedef wchar_t *string;
@@ -28,7 +28,7 @@ void lst_song_save()
 	for (i = 0; i < list_song->length; i++)
 	{
 		song *s = lst_song_index_at(list_song, i);
-		fprintf(fp, "%s;%s;%s", s->name, s->singer, s->path);
+		fprintf(fp, "%ls;%ls;%ls", s->name, s->singer, s->path);
 		if (i != list_song->length - 1)
 		{
 			fprintf(fp, "\n");
@@ -48,26 +48,26 @@ void lst_song_load()
 	}
 	else
 	{
-		char str[1024] = {0};
-		char *t = (char *)malloc(sizeof(char) * 100);
+		wchar_t str[1024] = {0};
+		wchar_t *t = (wchar_t *)malloc(sizeof(wchar_t) * 100);
 		while (!feof(fp))
 		{
-			fgets(str, max_line_char_num, fp);
+			fgetws(str, max_line_char_num, fp);
 
-			char *name = (char *)malloc(sizeof(char) * 100);
-			char *singer = (char *)malloc(sizeof(char) * 100);
-			char *path = (char *)malloc(sizeof(char) * 100);
+			wchar_t *name = (wchar_t *)malloc(sizeof(wchar_t) * 100);
+			wchar_t *singer = (wchar_t *)malloc(sizeof(wchar_t) * 100);
+			wchar_t *path = (wchar_t *)malloc(sizeof(wchar_t) * 100);
 
-			t = strtok(str, ";");
-			strcpy(name, t);
-			t = strtok(NULL, ";");
-			strcpy(singer, t);
-			t = strtok(NULL, ";");
-			strcpy(path, t);
+			t = wcstok(str, L";");
+			wcscpy(name, t);
+			t = wcstok(NULL, L";");
+			wcscpy(singer, t);
+			t = wcstok(NULL, L";");
+			wcscpy(path, t);
 
-			if (path[strlen(path) - 1] == '\n')
+			if (path[wcslen(path) - 1] == '\n')
 			{
-				path[strlen(path) - 1] = 0;
+				path[wcslen(path) - 1] = 0;
 			}
 
 			song *song = song_create_with_parameter(name, singer, path);
@@ -87,21 +87,21 @@ void songs_print(int is_show_index)
 			printf("%d ", i);
 		}
 		song *s = lst_song_index_at(list_song, i);
-		printf("%s;%s;%s\n", s->name, s->singer, s->path);
+		printf("%ls;%ls;%ls\n", s->name, s->singer, s->path);
 	}
 	puts("");
 }
 
 void read_string(wchar_t *path)
 {
-	printf("%s", path);
+	printf("path=%ls\n", path);
 	const int max_line_char_num = 1024;
 
-	FILE *fp = _wfopen(path, "r");
+	FILE *fp = _wfopen(path, L"r");
 
 	if (fp == NULL)
 	{
-		printf("Open %s failed.\n", path);
+		printf("Open %ls failed.\n", path);
 		return;
 	}
 	else
@@ -119,17 +119,17 @@ void read_string(wchar_t *path)
 
 void show_lrc(song *s)
 {
-	printf("\n---%s---\n---%s---\n---%s---\n\n", s->name, s->singer, s->path);
+	printf("\n---%ls---\n---%ls---\n---%ls---\n\n", s->name, s->singer, s->path);
 	read_string(s->path);
 	printf("\n");
 }
 void search()
 {
 	printf("Please input singer or song's name\n");
-	char s[100] = {0};
-
-	gets(s);
-
+	wchar_t s[100] = {0};
+	wscanf(L"%ls", s);
+	//fgetws(s, 100, stdin);
+	printf("you input -> %ls", s);
 	int i;
 
 	int result_num = 0;
@@ -138,10 +138,10 @@ void search()
 	for (i = 0; i < list_song->length; i++)
 	{
 		song *song = lst_song_index_at(list_song, i);
-		if (strstr(song->singer, s) != NULL || strstr(song->name, s) != NULL)
+		if (wcspbrk(song->singer, s) != NULL || wcspbrk(song->name, s) != NULL)
 		{
 			dict_index[result_num] = i;
-			printf("%d %s *** %s *** %s\n", result_num, song->name, song->singer, song->path);
+			printf("%d %ls *** %ls *** %ls\n", result_num, song->name, song->singer, song->path);
 			result_num++;
 		}
 	}
@@ -201,9 +201,9 @@ void remove_song()
 }
 void create_test_data()
 {
-	lst_song_append(list_song, song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"fu_kua.lrc"));
-	lst_song_append(list_song, song_create_with_parameter((char *)"Can't stand the rain", (char *)"The Rescues", (char *)"Can't stand the rain.lrc"));
-	lst_song_append(list_song, song_create_with_parameter((char *)"十年", (char *)"陈奕迅", (char *)"shi_nian.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"浮夸", (wchar_t *)L"陈奕迅", (wchar_t *)L"fu_kua.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"Can't stand the rain", (wchar_t *)L"The Rescues", (wchar_t *)L"Can't stand the rain.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"十年", (wchar_t *)L"陈奕迅", (wchar_t *)L"shi_nian.lrc"));
 
 	lst_song_save();
 }
@@ -211,11 +211,11 @@ void add_song()
 {
 	song s = {0};
 	puts("please input the song name");
-	gets(s.name);
+	fgetws(s.name, 100, stdin);
 	puts("please input the singer name");
-	gets(s.singer);
+	fgetws(s.singer, 100, stdin);
 	puts("please input the file path, example: fu_kua.lrc, and you could only input english");
-	gets(s.path);
+	fgetws(s.path, 100, stdin);
 	//songs[num_songs] = s;
 	//num_songs++;
 	lst_song_append(list_song, &s);
@@ -223,7 +223,7 @@ void add_song()
 
 	puts("please input words, enter blank line to stop input\n");
 
-	FILE *fp = fopen(s.path, "w+");
+	FILE *fp = _wfopen(s.path, L"w+");
 	while (1)
 	{
 		char buf[1024] = {0};
@@ -300,13 +300,13 @@ void main_loop(int is_admin)
 }
 int test_show_lrc_0()
 {
-	song *s = song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"fu_kua.lrc");
+	song *s = song_create_with_parameter((wchar_t *)L"浮夸", (wchar_t *)L"陈奕迅", (wchar_t *)L"fu_kua.lrc");
 	show_lrc(s);
 	return 0;
 }
 int test_show_lrc_1()
 {
-	song *s = song_create_with_parameter((char *)"浮夸", (char *)"陈奕迅", (char *)"浮夸.lrc");
+	song *s = song_create_with_parameter((wchar_t *)L"浮夸", (wchar_t *)L"陈奕迅", (wchar_t *)L"浮夸.lrc");
 	show_lrc(s);
 	return 0;
 }
@@ -320,6 +320,7 @@ void func_debug()
 }
 int main()
 {
+	setlocale(LC_ALL, "chs.utf8");
 #ifdef debug
 	func_debug();
 	printf("debug finished");

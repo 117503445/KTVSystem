@@ -334,3 +334,4 @@ ASALocalRun/
 .localhistory/
 
 build
+cmake-build-debug

@@ -2,14 +2,15 @@
 #ifndef _SONG_H
 #define _SONG_H
 #include <string.h>
+#include <wchar.h>
 typedef struct
 {
-    char name[50];
-    char singer[20];
-    char path[100];
+    wchar_t name[50];
+    wchar_t singer[20];
+    wchar_t path[100];
 } song;
 
 void song_print(song *s);
-song *song_create_with_parameter(char *song_name, char *singer_name, char* file_path);
+song *song_create_with_parameter(wchar_t *song_name, wchar_t *singer_name, wchar_t* file_path);
 #include "song.c"
 #endif
