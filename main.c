@@ -4,8 +4,9 @@
 #include <wchar.h>
 #include "song.h"
 #include "lst_song.h"
-#include <locale.h>
-#define debug
+#include "chcp.h"
+
+//#define debug
 
 typedef wchar_t *string;
 
@@ -127,10 +128,18 @@ void search()
 {
 	printf("Please input singer or song's name\n");
 	wchar_t s[100] = {0};
-	wscanf(L"%ls", s);
+	//wscanf(L"%ls", s);
 	//fgetws(s, 100, stdin);
-	printf("you input -> %ls", s);
+	chcp_gbk();
+	_getws(s);
+	chcp_utf8();
 	int i;
+	for (i = 0; i < wcslen(s); i++)
+	{
+		printf("%d ", s[i]);
+	}
+	printf("\n");
+	//chcp_utf8();
 
 	int result_num = 0;
 	int dict_index[100] = {0};
@@ -140,6 +149,7 @@ void search()
 		song *song = lst_song_index_at(list_song, i);
 		if (wcspbrk(song->singer, s) != NULL || wcspbrk(song->name, s) != NULL)
 		{
+			printf("%d %d ", wcspbrk(song->singer, s) != NULL, wcspbrk(song->name, s) != NULL);
 			dict_index[result_num] = i;
 			printf("%d %ls *** %ls *** %ls\n", result_num, song->name, song->singer, song->path);
 			result_num++;
@@ -320,7 +330,6 @@ void func_debug()
 }
 int main()
 {
-	setlocale(LC_ALL, "chs.utf8");
 #ifdef debug
 	func_debug();
 	printf("debug finished");
