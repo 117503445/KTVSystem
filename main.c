@@ -128,28 +128,20 @@ void search()
 {
 	printf("Please input singer or song's name\n");
 	wchar_t s[100] = {0};
-	//wscanf(L"%ls", s);
-	//fgetws(s, 100, stdin);
 	chcp_gbk();
 	_getws(s);
 	chcp_utf8();
-	int i;
-	for (i = 0; i < wcslen(s); i++)
-	{
-		printf("%d ", s[i]);
-	}
-	printf("\n");
-	//chcp_utf8();
 
 	int result_num = 0;
 	int dict_index[100] = {0};
 
+	int i;
 	for (i = 0; i < list_song->length; i++)
 	{
 		song *song = lst_song_index_at(list_song, i);
 		if (wcspbrk(song->singer, s) != NULL || wcspbrk(song->name, s) != NULL)
 		{
-			printf("%d %d ", wcspbrk(song->singer, s) != NULL, wcspbrk(song->name, s) != NULL);
+			//printf("%d %d ", wcspbrk(song->singer, s) != NULL, wcspbrk(song->name, s) != NULL);
 			dict_index[result_num] = i;
 			printf("%d %ls *** %ls *** %ls\n", result_num, song->name, song->singer, song->path);
 			result_num++;
@@ -211,9 +203,9 @@ void remove_song()
 }
 void create_test_data()
 {
-	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"浮夸", (wchar_t *)L"陈奕迅", (wchar_t *)L"fu_kua.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"浮夸", (wchar_t *)L"chen", (wchar_t *)L"fu_kua.lrc"));
 	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"Can't stand the rain", (wchar_t *)L"The Rescues", (wchar_t *)L"Can't stand the rain.lrc"));
-	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"十年", (wchar_t *)L"陈奕迅", (wchar_t *)L"shi_nian.lrc"));
+	lst_song_append(list_song, song_create_with_parameter((wchar_t *)L"lover", (wchar_t *)L"taylor", (wchar_t *)L"lover.lrc"));
 
 	lst_song_save();
 }
