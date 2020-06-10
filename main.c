@@ -219,21 +219,21 @@ void create_test_data()
 }
 void add_song()
 {
-	song s = {0};
+	song *s = song_create_new();
 	puts("please input the song name");
-	fgetws(s.name, 100, stdin);
+	_getws(s->name);
 	puts("please input the singer name");
-	fgetws(s.singer, 100, stdin);
-	puts("please input the file path, example: fu_kua.lrc, and you could only input english");
-	fgetws(s.path, 100, stdin);
+	_getws(s->singer);
+	puts("please input the file path, example: fu_kua.lrc");
+	_getws(s->path);
 	//songs[num_songs] = s;
 	//num_songs++;
-	lst_song_append(list_song, &s);
+	lst_song_append(list_song, s);
 	lst_song_save();
 
 	puts("please input words, enter blank line to stop input\n");
 
-	FILE *fp = _wfopen(s.path, L"w+");
+	FILE *fp = _wfopen(s->path, L"w+");
 	while (1)
 	{
 		char buf[1024] = {0};
@@ -330,6 +330,7 @@ void func_debug()
 }
 int main()
 {
+	chcp_utf8();
 #ifdef debug
 	func_debug();
 	printf("debug finished");

@@ -12,5 +12,6 @@ typedef struct
 
 void song_print(song *s);
 song *song_create_with_parameter(wchar_t *song_name, wchar_t *singer_name, wchar_t* file_path);
+song *song_create_new();
 #include "song.c"
 #endif
